@@ -810,17 +810,23 @@ static MKStoreManager* _sharedStoreManager;
   if([downloads count] > 0) {
     
     [[SKPaymentQueue defaultQueue] startDownloads:transaction.downloads];
-    // We don't have content yet, and we can't finish the transaction
 #ifndef NDEBUG
     NSLog(@"Download(s) started: %@", [transaction description]);
 #endif
-    return;
   }
 #endif
   
   [self provideContent: transaction.originalTransaction.payment.productIdentifier
             forReceipt:transaction.transactionReceipt
          hostedContent:downloads];
+    
+#ifdef __IPHONE_6_0
+    if([downloads count] > 0) {
+        // We don't have content yet, and we can't finish the transaction
+        return;
+    }
+#endif
+
 #elif TARGET_OS_MAC
   [self provideContent: transaction.originalTransaction.payment.productIdentifier
             forReceipt:nil
