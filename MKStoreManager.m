@@ -432,7 +432,7 @@ static MKStoreManager* _sharedStoreManager;
 
 - (void) buyFeature:(NSString*) featureId
          onComplete:(void (^)(NSString*, NSData*, NSArray*)) completionBlock
-        onCancelled:(void (^)(void)) cancelBlock
+        onCancelled:(void (^)(NSError *error)) cancelBlock
 {
   self.onTransactionCompleted = completionBlock;
   self.onTransactionCancelled = cancelBlock;
@@ -755,7 +755,7 @@ static MKStoreManager* _sharedStoreManager;
   [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
   
   if(self.onTransactionCancelled)
-    self.onTransactionCancelled();
+    self.onTransactionCancelled(transaction.error);
 }
 
 - (void) completeTransaction: (SKPaymentTransaction *)transaction
